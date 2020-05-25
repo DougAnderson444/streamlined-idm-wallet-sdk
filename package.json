@@ -1,0 +1,38 @@
+{
+  "name": "streamlined-idm-wallet-sdk",
+  "version": "1.0.0",
+  "description": "DID wallet SDK",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "scripts": {
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src -d lib --ignore \"**/__tests__\" --delete-dir-on-start",
+    "build:es": "cross-env BABEL_ENV=es babel src -d es --ignore \"**/__tests__\" --delete-dir-on-start",
+    "build": "npm run build:commonjs && npm run build:es",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-private-methods": "^7.3.2",
+    "babel-jest": "^24.1.0",
+    "@moxy/babel-preset": "^3.2.5",
+    "cross-env": "^7.0.2",
+    "jest": "^24.5.0"
+  },
+  "dependencies": {
+    "did-ipid": "file:../js-did-ipid"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DougAnderson444/streamlined-idm-wallet-sdk.git"
+  },
+  "keywords": [
+    "DID"
+  ],
+  "author": "Doug Anderson",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/DougAnderson444/streamlined-idm-wallet-sdk/issues"
+  },
+  "homepage": "https://github.com/DougAnderson444/streamlined-idm-wallet-sdk#readme"
+}
