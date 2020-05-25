@@ -3,9 +3,7 @@ import createDidm from "./didm";
 import createStorage from "./storage";
 import createIdentities from "./identities";
 import createSessions from "./sessions";
-/*
 import createLocker from "./locker";
-*/
 import { UnavailableIpfsError } from "./utils/errors";
 
 const createIpfs = async (ipfs) => {
@@ -30,30 +28,21 @@ const createWallet = async (options) => {
   const storage = await createStorage(secret); // LevelDB with encrypt wrapper
   const identities = createIdentities(storage, didm, ipfs); // OrbitDB
   const sessions = await createSessions(storage, identities);
-  /*
-    const locker = await createLocker(storage, secret);
+  const locker = await createLocker(storage, secret);
 
-    const idmWallet = {
-        ipfs,
-        didm,
-        storage,
-        locker,
-        identities,
-        sessions,
-    };
-
-    // Expose a global for the idm wallet for debug purposes only in DEV
-    if (process.env.NODE_ENV === 'development') {
-        window.__IDM_WALLET__ = idmWallet;
-    }
-    */
   const idmWallet = {
     ipfs,
     didm,
     storage,
+    locker,
     identities,
-    sessions
+    sessions,
   };
+
+  // Expose a global for the idm wallet for debug purposes only in DEV
+  if (process.env.NODE_ENV === "development") {
+    window.__IDM_WALLET__ = idmWallet;
+  }
 
   return idmWallet;
 };
