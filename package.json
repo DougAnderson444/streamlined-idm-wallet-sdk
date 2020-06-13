@@ -1,6 +1,6 @@
 {
   "name": "streamlined-idm-wallet-sdk",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "DID wallet SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
