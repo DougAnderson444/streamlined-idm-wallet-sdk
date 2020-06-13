@@ -133,9 +133,8 @@ class Identities {
 
         await this.load();
 
-        const did = ""  // await this.#didm.getDid(didMethod, params);
+        const did = await this.#didm.getDid(didMethod, params);
         
-        // did not used in ipid.update(), params are privateKey (pem), mnemonic, or seed
         await this.#didm.update(did, params, (document) => {
             document.addService({
                 id: id, // ie'data',
