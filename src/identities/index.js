@@ -126,6 +126,26 @@ class Identities {
         return identity;
     }
 
+    async addService(didMethod, params, serviceDetails) {
+        const { id, type, serviceEndpoint } = serviceDetails || {};
+
+        this.#assertDidmSupport(didMethod, 'update');
+
+        await this.load();
+
+        //const did = await this.#didm.getDid(didMethod, params);
+        
+        // did not used, params are privateKey (pem), mnemonic, or seed
+        await this.#didm.update(did, params, (document) => {
+            document.addService({
+                id: id, // ie'data',
+                type: type, //ie 'DataService',
+                serviceEndpoint: serviceEndpoint // ie 'https://doug.peerpiper.io/',
+            });
+        });
+        
+    }
+
     async import(didMethod, params) {
         const { deviceInfo } = params || {};
 

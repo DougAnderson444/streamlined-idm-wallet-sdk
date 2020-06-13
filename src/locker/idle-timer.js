@@ -1,7 +1,7 @@
 import signal from 'pico-signals';
 
 const STORAGE_MAXTIME_KEY = 'locker.idle.maxTime';
-const DEFAULT_MAX_TIME = 10 * 60 * 1000;
+const DEFAULT_MAX_TIME = 3 * 60 * 1000;
 
 class IdleTimer {
     #storage;
