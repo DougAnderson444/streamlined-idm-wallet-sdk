@@ -30,11 +30,19 @@ class Ipid {
     }
 
     async create(params, operations) {
-        const masterKeyPair = await generateKeyPair('rsa');
+        
+        let pem
+        
+        if(params.privateKey) {
+            pem = params.privateKey
+        } else {
+            const masterKeyPair = await generateKeyPair('rsa');
+            pem = masterKeyPair.privateKey
+        }
 
         await this.#assureDidIpid();
 
-        const didDocument = await this.#didIpid.create(masterKeyPair.privateKey, (document) => {
+        const didDocument = await this.#didIpid.create(pem, (document) => {
             document.addPublicKey({
                 id: 'idm-master',
                 type: 'RsaVerificationKey2018',
