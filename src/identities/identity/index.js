@@ -151,6 +151,7 @@ export const createIdentity = async ({ did, currentDevice, backupData, profileDe
 
         return new Identity(descriptor, storage, orbitdb, devices, backup, profile, apps);
     } catch (err) {
+        console.log(err)
         await removeIdentity(id, storage, orbitdb);
 
         throw err;

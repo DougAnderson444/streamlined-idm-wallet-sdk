@@ -17,6 +17,7 @@ const createIpfs = async (ipfs) => {
 };
 
 const createWallet = async (options) => {
+
   options = {
     ipfs: undefined,
     ...options,
@@ -24,12 +25,12 @@ const createWallet = async (options) => {
 
   const ipfs = await createIpfs(options.ipfs);
   const secret = createSecret(); // Secret Object
-  const didm = createDidm(ipfs); // creates IPID methods
+  const didm = createDidm(ipfs, options.apiMultiAddr, options.wsMultiAddr); // creates IPID methods
   const storage = await createStorage(secret); // LevelDB with encrypt wrapper
   const identities = createIdentities(storage, didm, ipfs); // OrbitDB
   const sessions = await createSessions(storage, identities);
   const locker = await createLocker(storage, secret);
-
+  
   const idmWallet = {
     ipfs,
     didm,
@@ -38,11 +39,6 @@ const createWallet = async (options) => {
     identities,
     sessions,
   };
-
-  // Expose a global for the idm wallet for debug purposes only in DEV
-  if (process.env.NODE_ENV === "development") {
-    window.__IDM_WALLET__ = idmWallet;
-  }
 
   return idmWallet;
 };

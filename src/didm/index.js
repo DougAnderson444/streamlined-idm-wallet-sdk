@@ -70,9 +70,9 @@ class Didm {
     }
 }
 
-const createDidm = (ipfs) => {
+const createDidm = (ipfs, apiMultiAddr, wsMultiAddr) => {
     const methods = {
-        ipid: createIpid(ipfs),
+        ipid: createIpid(ipfs, apiMultiAddr, wsMultiAddr),
     };
 
     return new Didm(methods);

@@ -98,6 +98,7 @@ class Identities {
     }
 
     async create(didMethod, params) {
+
         const { profileDetails, deviceInfo } = params || {};
 
         this.#assertDidmSupport(didMethod, 'create');
@@ -108,7 +109,7 @@ class Identities {
 
         const { currentDevice, didPublicKey } = await identityFns.generateCurrentDevice(deviceInfo);
 
-        const { did, backupData } = await this.#didm.create(didMethod, params, (document) => {
+        const { did, didDocument, backupData } = await this.#didm.create(didMethod, params, (document) => {
             document.addPublicKey(didPublicKey);
             document.addAuthentication(didPublicKey.id);
         });
@@ -122,7 +123,7 @@ class Identities {
 
         this.#identitiesMap[identity.getId()] = identity;
         this.#updateIdentitiesList({ type: 'create', id: identity.getId() });
-
+        
         return identity;
     }
 
