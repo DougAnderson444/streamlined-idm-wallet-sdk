@@ -75,6 +75,19 @@ class Locker {
         this.#secret.unset();
     }
 
+    async store(key, value){
+        await this.#storage.set(key, value, { encrypt: true })
+    }
+
+    async getValue(key){
+        const locked = this.isLocked();
+        
+        if (!locked) {
+            return await this.#storage.get(key)
+        }
+        return false
+    }
+
     onLockedChange(fn) {
         return this.#onLockedChange.add(fn);
     }
