@@ -136,7 +136,7 @@ class Identities {
 
         const did = await this.#didm.getDid(didMethod, params);
         
-        await this.#didm.update(did, params, (document) => {
+        return await this.#didm.update(did, params, (document) => {
             document.addService({
                 id: id, // ie'data',
                 type: type, //ie 'DataService',
