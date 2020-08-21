@@ -79,12 +79,11 @@ class Identities {
         return this.#identitiesList;
     }
 
-    async getDidDoc(didMethod, params) {
+    async getDidDoc(didMethod, did) {
         this.#assertDidmSupport(didMethod, 'getDid', 'resolve');
 
         await this.load();
 
-        const did = await this.#didm.getDid(didMethod, params);
         const didDocument = await this.#didm.resolve(did);
 
         return didDocument;
