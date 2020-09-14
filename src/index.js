@@ -25,7 +25,7 @@ const createWallet = async (options) => {
 
   const ipfs = await createIpfs(options.ipfs);
   const secret = createSecret(); // Secret Object
-  const didm = createDidm(ipfs, options.apiMultiAddr, options.wsMultiAddr); // creates IPID methods
+  const didm = createDidm(ipfs, options.apiMultiAddr, options.wsMultiAddr, options.Hyperdrive); // creates DID methods
   const storage = await createStorage(secret); // LevelDB with encrypt wrapper
   const identities = createIdentities(storage, didm, ipfs); // OrbitDB
   const sessions = await createSessions(storage, identities);

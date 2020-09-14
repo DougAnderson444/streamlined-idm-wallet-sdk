@@ -1,4 +1,6 @@
-import createIpid from './methods/ipid';
+import createIpid from './methods/ipid/ipid';
+import createHyperid from './methods/hyper/hyper';
+
 import { parseDid } from '../utils/did';
 import { UnsupportedDidMethodError, UnsupportedDidMethodPurposeError } from '../utils/errors';
 
@@ -70,9 +72,10 @@ class Didm {
     }
 }
 
-const createDidm = (ipfs, apiMultiAddr, wsMultiAddr) => {
+const createDidm = (ipfs, apiMultiAddr, wsMultiAddr, Hyperdrive) => {
     const methods = {
         ipid: createIpid(ipfs, apiMultiAddr, wsMultiAddr),
+        hyper: createHyperid(Hyperdrive)
     };
 
     return new Didm(methods);

@@ -1,41 +1,35 @@
-import createDidIpid, { getDid } from "did-ipid";
+import createDidHyper, { getDid } from "js-did-hyper";
 import {
   generateKeyPair,
   getKeyPairFromMnemonic,
   getKeyPairFromSeed,
 } from "human-crypto-keys";
-import { MissingDidParameters } from "../../utils/errors";
+import { MissingDidParameters } from "../../../utils/errors";
 
-class Ipid {
+class Hyperid {
   static info = {
-    method: "ipid",
+    method: "hyper",
     description:
-      "The Interplanetary Identifiers DID method (IPID) supports DIDs on the public and private Interplanetary File System (IPFS) networks.",
-    homepageUrl: "https://did-ipid.github.io/ipid-did-method/",
+      "The Hyper-protocol DID method (IPID) supports DIDs on the hyper-protocol network.",
+    homepageUrl: "https://github.com/DougAnderson444/js-did-hyper",
     icons: [],
   };
 
-  #didIpid;
-  #ipfs;
-  #apiMultiAddr;
-  #wsMultiAddr;
+  #didHyperId;
+  #Hyperdrive;
 
-  constructor(ipfs, apiMultiAddr, wsMultiAddr) {
-    this.#ipfs = ipfs;
-    this.#apiMultiAddr = apiMultiAddr;
-    this.#wsMultiAddr = wsMultiAddr;
+  constructor(Hyperdrive) {
+    this.#Hyperdrive = Hyperdrive;
   }
 
   async getDid(params) {
-    const masterPrivateKey = await this.#getMasterPrivateKey(params);
-
-    return getDid(masterPrivateKey);
+    return getDid(params.drive);
   }
 
   async resolve(did) {
-    await this.#assureDidIpid();
+    await this.#assureDidHyper();
 
-    return this.#didIpid.resolve(did);
+    return await this.#didHyperId.resolve(did);
   }
 
   async create(params, operations) {
@@ -49,10 +43,10 @@ class Ipid {
       backupData = { ...params.backupData };
     else backupData = await generateKeyPair("rsa");
 
-    await this.#assureDidIpid();
+    await this.#assureDidHyper();
         
-    const didDocument = await this.#didIpid.create(
-      backupData.privateKey,
+    const didDocument = await this.#didHyperId.create(
+      params.drive,
       (document) => {
         document.addPublicKey({
           id: "idm-master",
@@ -72,14 +66,10 @@ class Ipid {
 }
 
   async update(did, params, operations) {
-    const masterPrivateKey = await this.#getMasterPrivateKey(params);
+    
+    await this.#assureDidHyper();
 
-    await this.#assureDidIpid();
-
-    const didDocument = await this.#didIpid.update(
-      masterPrivateKey,
-      operations
-    );
+    const didDocument = await this.#didHyperId.update(params.drive, operations);
 
     return didDocument;
   }
@@ -90,10 +80,9 @@ class Ipid {
     return publicKey.some((key) => key.id === publicKeyId);
   }
 
-  #assureDidIpid = async () => {
-    if (!this.#didIpid) {
-      let options = {}
-      this.#didIpid = await createDidIpid(this.#ipfs, options, this.#apiMultiAddr, this.#wsMultiAddr);
+  #assureDidHyper = async () => {
+    if (!this.#didHyperId) {
+      this.#didHyperId = await createDidHyper(this.#Hyperdrive);
     }
   };
 
@@ -125,6 +114,6 @@ class Ipid {
   };
 }
 
-const createIpid = (ipfs, apiMultiAddr, wsMultiAddr) => new Ipid(ipfs, apiMultiAddr, wsMultiAddr);
+const createHyperid = (Hyperdrive) => new Hyperid(Hyperdrive);
 
-export default createIpid;
+export default createHyperid;
