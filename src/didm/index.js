@@ -1,4 +1,4 @@
-import createIpid from './methods/ipid/ipid';
+// import createIpid from './methods/ipid/ipid';
 import createHyperid from './methods/hyper/hyper';
 
 import { parseDid } from '../utils/did';
@@ -72,10 +72,10 @@ class Didm {
     }
 }
 
-const createDidm = (ipfs, apiMultiAddr, wsMultiAddr, Hyperdrive) => {
+const createDidm = (options) => {
     const methods = {
-        ipid: createIpid(ipfs, apiMultiAddr, wsMultiAddr),
-        hyper: createHyperid(Hyperdrive)
+        // ipid: createIpid(ipfs, apiMultiAddr, wsMultiAddr),
+        hyper: createHyperid(options.hypnsNode)
     };
 
     return new Didm(methods);

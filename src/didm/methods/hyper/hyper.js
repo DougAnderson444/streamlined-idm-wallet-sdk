@@ -1,6 +1,5 @@
-import createDidHyper, { getDid } from "js-did-hyper";
+import { createHyperDid, getDid } from "js-did-hyper";
 import {
-  generateKeyPair,
   getKeyPairFromMnemonic,
   getKeyPairFromSeed,
 } from "human-crypto-keys";
@@ -8,68 +7,71 @@ import { MissingDidParameters } from "../../../utils/errors";
 
 class Hyperid {
   static info = {
-    method: "hyper",
+    method: 'hyper',
     description:
-      "The Hyper-protocol DID method (IPID) supports DIDs on the hyper-protocol network.",
-    homepageUrl: "https://github.com/DougAnderson444/js-did-hyper",
-    icons: [],
-  };
+      'The Hyper-protocol DID method (Hypns) supports DIDs on the hyper-protocol multifeed network.',
+    homepageUrl: 'https://github.com/DougAnderson444/js-did-hyper',
+    icons: []
+  }
 
   #didHyperId;
-  #Hyperdrive;
+  #hyperNode;
 
-  constructor(Hyperdrive) {
-    this.#Hyperdrive = Hyperdrive;
+  constructor (hyperNode) {
+    this.#hyperNode = hyperNode
   }
 
-  async getDid(params) {
-    return getDid(params.drive);
+  async getDid (params) {
+    return getDid(params.hypnsInstance)
   }
 
-  async resolve(did) {
-    await this.#assureDidHyper();
+  async resolve (did) {
+    await this.#assureHyperId()
 
-    return await this.#didHyperId.resolve(did);
+    return await this.#didHyperId.resolve(did)
   }
 
-  async create(params, operations) {
-    let backupData;
+  async create (params, operations) {
+    let backupData
 
     if (
       params.backupData &&
       params.backupData.privateKey &&
       params.backupData.publicKey
-    )
-      backupData = { ...params.backupData };
-    else backupData = await generateKeyPair("rsa");
+    ) {
+      backupData = { ...params.backupData }
+    } else {
+      backupData.privateKey = this.#hyperNode.hcrypto.keyPair().publicKey
+      backupData.publicKey = this.#hyperNode.hcrypto.keyPair().secretKey
+    }
 
-    await this.#assureDidHyper();
-        
+    await this.#assureHyperId()
+
     const didDocument = await this.#didHyperId.create(
       params.drive,
       (document) => {
         document.addPublicKey({
-          id: "idm-master",
-          type: "RsaVerificationKey2018",
-          publicKeyPem: backupData.publicKey,
-        });
+          id: 'idm-master',
+          type: 'Ed25519VerificationKey2018',
+          publicKeyHex: backupData.publicKey
+        })
 
-        operations(document);
+        operations(document)
       }
-    );
+    )
 
     return {
       did: didDocument.id,
       didDocument,
-      backupData,
+      backupData
     }
-}
+  }
 
   async update(did, params, operations) {
     
-    await this.#assureDidHyper();
+    await this.#assureHyperId();
 
-    const didDocument = await this.#didHyperId.update(params.drive, operations);
+    const didDocument = await this.#didHyperId.update(params.hypnsInstance, operations);
 
     return didDocument;
   }
@@ -80,9 +82,9 @@ class Hyperid {
     return publicKey.some((key) => key.id === publicKeyId);
   }
 
-  #assureDidHyper = async () => {
+  #assureHyperId = async () => {
     if (!this.#didHyperId) {
-      this.#didHyperId = await createDidHyper(this.#Hyperdrive);
+      this.#didHyperId = await createHyperDid(this.#hyperNode);
     }
   };
 
@@ -94,7 +96,10 @@ class Hyperid {
     }
 
     if (seed) {
-      const { privateKey } = await getKeyPairFromSeed(seed, algorithm || "rsa");
+      // const { privateKey } = await getKeyPairFromSeed(seed, algorithm || "rsa");
+      const publicKey = Buffer.allocUnsafe(sodium.crypto_sign_PUBLICKEYBYTES)
+      const secretKey = Buffer.allocUnsafe(sodium.crypto_sign_SECRETKEYBYTES)
+      this.#hyperNode.sodium.crypto_sign_seed_keypair(publicKey, secretKey, Buffer.from(seed, 'hex')) 
 
       return privateKey;
     }
@@ -114,6 +119,6 @@ class Hyperid {
   };
 }
 
-const createHyperid = (Hyperdrive) => new Hyperid(Hyperdrive);
+const createHyperId = (node) => new HyperId(node)
 
-export default createHyperid;
+export default createHyperId;

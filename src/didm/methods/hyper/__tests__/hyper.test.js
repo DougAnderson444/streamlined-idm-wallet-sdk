@@ -7,10 +7,10 @@ import {
   mockBackupData,
   mockHyperdrive,
 } from "./mocks";
-import createDidHyper from "js-did-hyper";
+import createDidHyper from "js-did-hypns";
 import createHyperid from "../hyper";
 
-jest.mock("js-did-hyper", () => {
+jest.mock("js-did-hypns", () => {
   const { getDid, ...rest } = mockDidHyper;
 
   return {
@@ -38,7 +38,7 @@ it("should have all supported methods", async () => {
     method: "hyper",
     description:
       "The Hyper-protocol DID method (IPID) supports DIDs on the hyper-protocol network.",
-    homepageUrl: "https://github.com/DougAnderson444/js-did-hyper",
+    homepageUrl: "https://github.com/DougAnderson444/js-did-hypns",
     icons: [],
   });
 });
